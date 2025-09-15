@@ -36,5 +36,7 @@
 	<true/>
 	<key>NSSupportsSuddenTermination</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluesnooze needs access to Bluetooth to automatically turn it off when your Mac goes to sleep or is locked, and turn it back on when you wake it up or unlock it. This helps save battery and prevents unwanted connections.</string>
 </dict>
 </plist>
