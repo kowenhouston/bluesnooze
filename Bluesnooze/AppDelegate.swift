@@ -8,13 +8,14 @@
 
 import Cocoa
 import IOBluetooth
-// import LaunchAtLogin  // Temporarily disabled - needs Carthage build
+import LaunchAtLogin
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var statusMenu: NSMenu!
     @IBOutlet weak var launchAtLoginMenuItem: NSMenuItem!
+    @IBOutlet weak var snoozeOnLockscreenMenuItem: NSMenuItem!
 
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private var lockWatcher: LockWatcher?
@@ -22,24 +23,39 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         initStatusItem()
         setLaunchAtLoginState()
+        setSnoozeOnLockscreenState()
         setupNotificationHandlers()
         setBluetooth(powerOn: true)
         setupLockWatcher()
     }
-    
+
     private func setupLockWatcher() {
         lockWatcher = LockWatcher()
         lockWatcher?.start(
-            onLock: { self.setBluetooth(powerOn: false) },
-            onUnlock: { self.setBluetooth(powerOn: true) }
+            onLock: {
+                if UserDefaults.standard.bool(forKey: "snoozeOnLockscreen") {
+                    self.setBluetooth(powerOn: false)
+                }
+            },
+            onUnlock: {
+                if UserDefaults.standard.bool(forKey: "snoozeOnLockscreen") {
+                    self.setBluetooth(powerOn: true)
+                }
+            }
         )
     }
 
     // MARK: Click handlers
 
     @IBAction func launchAtLoginClicked(_ sender: NSMenuItem) {
-        // LaunchAtLogin.isEnabled = !LaunchAtLogin.isEnabled  // Temporarily disabled
-        // setLaunchAtLoginState()  // Temporarily disabled
+        LaunchAtLogin.isEnabled = !LaunchAtLogin.isEnabled
+        setLaunchAtLoginState()
+    }
+
+    @IBAction func snoozeOnLockscreenClicked(_ sender: NSMenuItem) {
+        let currentState = UserDefaults.standard.bool(forKey: "snoozeOnLockscreen")
+        UserDefaults.standard.set(!currentState, forKey: "snoozeOnLockscreen")
+        setSnoozeOnLockscreenState()
     }
 
     @IBAction func quitClicked(_ sender: NSMenuItem) {
@@ -87,9 +103,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setLaunchAtLoginState() {
-        // let state = LaunchAtLogin.isEnabled ? NSControl.StateValue.on : NSControl.StateValue.off  // Temporarily disabled
-        // launchAtLoginMenuItem.state = state  // Temporarily disabled
+        let state = LaunchAtLogin.isEnabled ? NSControl.StateValue.on : NSControl.StateValue.off
+        launchAtLoginMenuItem.state = state
         launchAtLoginMenuItem.state = .off  // Default to off for now
+    }
+
+    private func setSnoozeOnLockscreenState() {
+        let isEnabled = UserDefaults.standard.bool(forKey: "snoozeOnLockscreen")
+        snoozeOnLockscreenMenuItem.state = isEnabled ? .on : .off
     }
 }
 
@@ -106,7 +127,7 @@ final class LockWatcher {
     }
 
     deinit {
-        if let o = lockObserver { dnc.removeObserver(o) }
-        if let o = unlockObserver { dnc.removeObserver(o) }
+        if let observer = lockObserver { dnc.removeObserver(observer) }
+        if let observer = unlockObserver { dnc.removeObserver(observer) }
     }
 }

@@ -15,6 +15,7 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Bluesnooze" customModuleProvider="target">
             <connections>
                 <outlet property="launchAtLoginMenuItem" destination="I9E-pI-lLm" id="DFX-bS-N3m"/>
+                <outlet property="snoozeOnLockscreenMenuItem" destination="SnY-gH-4Km" id="pLm-8N-9Wy"/>
                 <outlet property="statusMenu" destination="AEO-aA-1fp" id="ueI-UR-7ba"/>
             </connections>
         </customObject>
@@ -25,6 +26,12 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="launchAtLoginClicked:" target="Voe-Tx-rLC" id="ooK-DW-6Kn"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Snooze on Lockscreen" id="SnY-gH-4Km" userLabel="Snooze On Lockscreen Menu Item">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="snoozeOnLockscreenClicked:" target="Voe-Tx-rLC" id="wEr-tY-8Ui"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Quit" id="0IH-xa-Tvk">
