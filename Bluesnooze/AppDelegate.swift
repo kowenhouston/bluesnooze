@@ -105,7 +105,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setLaunchAtLoginState() {
         let state = LaunchAtLogin.isEnabled ? NSControl.StateValue.on : NSControl.StateValue.off
         launchAtLoginMenuItem.state = state
-        launchAtLoginMenuItem.state = .off  // Default to off for now
     }
 
     private func setSnoozeOnLockscreenState() {
